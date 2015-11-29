@@ -14,13 +14,13 @@ $ composer require marando/astrodate
 Usage
 -----
 
-###Interp3
+###Interp3 and Interp5
 
-`Interp3` can interpolate data using the second difference interpolation method. This method requires that all data points are equidistant.
+Both the `Interp3` and `Interp5` objects can interpolate data using the second and third difference interpolation methods respectively. This method requires that all data points are equidistant.
 
 #### Initialization 
 
-An `Interp3` object can be created by either calling the default constructor or the `init()` static constructor. You must supply the first and last x-values as well as the full table of y-values:
+An `Interp3` or `Interp5` object can be created by either calling the default constructor or the `init()` static constructor. You must supply the first and last x-values as well as the full table of y-values:
 
 ```php
 $i3 = new Interp3(1, 7, [1, 2, 3, 4, 5, 6, 7]);
@@ -88,7 +88,30 @@ Output:
 5.5
 ```
 
-Also, as seen before, the third argument `$c` returns by reference the last difference from the table of differences.
+Also, as seen before, the last difference from the table of differences is returned, but as the fourth value here.
+
+
+#### Interpolation of Extrema
+The extremum of the data can be found by calling the `extremum()` function. Both the `x` and `y` value at the extremum are returned by reference as well as the last difference from the table of differences:
+```php
+$i3 = new Interp3(1, 3, [0.71, 0.68, 0.79]);
+$i3->extremum($x, $y, $c);
+
+print $x;
+print $y;
+print $c;
+```
+Output:
+```
+1.7142857142857
+0.67428571428571
+0.1
+```
+
+If no extremum can be found a `NoExtremumException` will be thrown.
+
+#### Interpolation of the Zero
+
 
 
 
