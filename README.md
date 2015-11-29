@@ -1,6 +1,6 @@
 Interp
 ======
-Interp is a PHP data interpolation package that allows data to be interpolated using the second and third difference interpolation methods as well as Lagrange interpolation method.
+Interp is a PHP data interpolation package that can interpolate data using difference interpolation as well as the Lagrange interpolation formula.
 
 
 Installation
