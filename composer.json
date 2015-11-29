@@ -1,0 +1,22 @@
+{
+  "name": "marando/interp",
+  "description": "A PHP data interpolation package",
+  "require": {
+    "php": "^5.5"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^5.0"
+  },
+  "license": "GNU2",
+  "authors": [
+    {
+      "name": "Ashley Marando",
+      "email": "a.marando@me.com"
+    }
+  ],
+  "autoload": {
+    "psr-0": {
+      "Marando": "src/"
+    }
+  }
+}
