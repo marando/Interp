@@ -5,9 +5,9 @@ Interp is a PHP data interpolation package that allows data to be interpolated u
 
 Installation
 ------------
-`AstroDate` can be installed with `composer` like so:
+`Interp` can be installed with `composer` like so:
 ```
-$ composer require marando/astrodate
+$ composer require marando/interp
 ```
 
 
