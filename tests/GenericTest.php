@@ -2,6 +2,7 @@
 
 use \Marando\Interp\Interp3;
 use \Marando\Interp\Interp5;
+use \Marando\Interp\Lagrange;
 
 /*
  * Copyright (C) 2015 Ashley Marando
@@ -25,7 +26,15 @@ class GenericTest extends PHPUnit_Framework_TestCase {
 
   public function test() {
 
-   
+    $data = [
+        [1, 1],
+        [3, 2],
+        [7, 3],
+        [3.4, 10],
+    ];
+
+    Lagrange::init($data)->x(3.1, $y);
+echo $y;
 
     return;
     //$i3 = Interp3::init(12, 20, [1.3814294, 2.3812213, 3.3812453]);
