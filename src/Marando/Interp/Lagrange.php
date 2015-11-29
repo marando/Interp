@@ -72,8 +72,8 @@ class Lagrange {
    */
   public function x($x, &$y) {
     // Check if x value is within data set, if not return false
-    if (!$this->checkRange($x))
-      return false;
+    //if (!$this->checkRange($x))
+      //return false;
 
     $sum = 0;
     for ($i = 0; $i < count($this->data); $i++) {
@@ -103,7 +103,7 @@ class Lagrange {
    * @param  OutOfRangeException $e Exception if the x-value is out of range
    * @return bool                   True if within range, false if out of range
    */
-  protected function checkRange($x, &$e) {
+  protected function checkRange($x, OutOfRangeException &$e = null) {
     // Get min and max x values for instance
     $min = min($this->data)[0];
     $max = max($this->data)[0];
@@ -115,17 +115,5 @@ class Lagrange {
 
     return isset($e) ? false : true;
   }
-
-}
-
-/**
- * Interpolates the y-value at a given x-value within a dataset using the
- * Lagrange interpolation algorithm
- *
- * @param  float $x     x-value to interpolate
- * @param  array $table Dataset
- * @return float        interpolated value of y
- */
-function lagrangeInterp($x, $table) {
 
 }

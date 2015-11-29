@@ -143,17 +143,18 @@ class Interp3 {
    * @param float $n  Interpolation n-factor
    * @param float $x  (returned) Interpolated value of x at n
    * @param float $y  (returned) Interpolated value of y at n
+   * @param float $c  (returned) Last value from table of differences
    * @param float $xt Value of x to target, (required if more than 3 y-values)
    */
-  public function n($n, &$x, &$y, $xt = null) {
+  public function n($n, &$x, &$y, &$c = null, $xt = null) {
     if ($xt) {
       // Target the x value then interpolate
       $this->slice($xt, $x1, $x3, $yt);
-      $this->interpN($n, $x1, $x3, $yt, $x, $y);
+      $this->interpN($n, $x1, $x3, $yt, $x, $y, $c);
     }
     else {
       // Interpolate
-      $this->interpN($n, $this->x1, $this->xN, $this->y, $x, $y);
+      $this->interpN($n, $this->x1, $this->xN, $this->y, $x, $y, $c);
     }
 
     return;
@@ -164,10 +165,11 @@ class Interp3 {
    *
    * @param float $x Value of x to interpolate
    * @param float $y (returned) Interpolated value of y at x
+   * @param float $c (returned) Last value from table of differences
    *
    * @throws OutOfRangeException Occurs if the x-value is out of range
    */
-  public function x($x, &$y) {
+  public function x($x, &$y, &$c = null) {
     // Check if x value is out of range
     if ($x < $this->x1 || $x > $this->xN)
       throw new OutOfRangeException("The x value '{$x}' is out of the range "
@@ -182,7 +184,7 @@ class Interp3 {
     $n  = (2 * $x - $xΣ) / $xΔ;
 
     // For calculated slice, interpolate n
-    $this->interpN($n, $x1, $x3, $yt, $x, $y);
+    $this->interpN($n, $x1, $x3, $yt, $x, $y, $c);
     return;
   }
 
@@ -191,14 +193,16 @@ class Interp3 {
    *
    * @param  float $x (returned) Interpolated value of x at the extremum
    * @param  float $y (returned) Interpolated value of y at the extremum
+   * @param  float $c (returned) Last value from table of differences
    * @return bool     True if extremum found, false if it was not
    */
-  public function extremum(&$x, &$y) {
+  public function extremum(&$x, &$y, &$c = null) {
     $found = false;
 
     // Initialize x and y
     $x;
     $y = PHP_INT_MAX;
+    $c´;
 
     // Find extremum for each slice
     foreach ($this->slices() as $slice) {
@@ -224,16 +228,19 @@ class Interp3 {
 
       // Check if this iteration's y is < the previous
       if ($y´ < $y) {
-        // New extremum found, populate variablesF
+        // New extremum found, populate variables
         $found = true;
         $intvl = abs($x3 - $x1) / (count($yt) - 1);
         $x     = ($x1 + $intvl) + ($n * $intvl);
         $y     = $y´;
+        $c´    = $c;
       }
     }
 
     if (!$found)
       $y = null;
+    else
+      $c = $c´;
 
     // Return true if extremum found, false if not
     return $found;
@@ -244,9 +251,10 @@ class Interp3 {
    *
    * @param  float $x (returned) Interpolated value of x at the zero
    * @param  float $y (returned) Interpolated value of y at the zero
+   * @param  float $c (returned) Last value from table of differences
    * @return bool     True if zero found, false if it was not
    */
-  public function zero(&$x, &$y) {
+  public function zero(&$x, &$y, &$c = null) {
     // Flag for zero n-factor found
     $f0 = false;
 
@@ -289,7 +297,7 @@ class Interp3 {
 
     // If an n-factor for the zero has been found, interpolate it
     if ($f0)
-      $this->interpN($n, $x1, $x3, $yt, $x, $y);
+      $this->interpN($n, $x1, $x3, $yt, $x, $y, $c);
 
     // Return true if zero found, false if not
     return $f0 ? true : false;
@@ -477,11 +485,12 @@ class Interp3 {
    * @param array $yt Array of y-values
    * @param float $x  (returned) Interpolated value of x at n
    * @param float $y  (returned) Interpolated value of y at n
+   * @param float $c  (returned) Last value from table of differences
    *
    * @throws IncorrectCountException Occurs if more than 3 y-values
    * @throws OutOfRangeException     Occurs if the n-favtor is out of range
    */
-  protected function interpN($n, $x1, $x3, array $yt, &$x, &$y) {
+  protected function interpN($n, $x1, $x3, array $yt, &$x, &$y, &$c = null) {
     if (count($yt) != 3)
       throw new IncorrectCountException("Interpolation by n-factor is not "
       . "valid with not exactly three y values");

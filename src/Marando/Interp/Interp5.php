@@ -143,17 +143,18 @@ class Interp5 {
    * @param float $n  Interpolation n-factor
    * @param float $x  (returned) Interpolated value of x at n
    * @param float $y  (returned) Interpolated value of y at n
+   * @param float $K  (returned) Last value from table of differences
    * @param float $xt Value of x to target, (required if more than 5 y-values)
    */
-  public function n($n, &$x, &$y, $xt = null) {
+  public function n($n, &$x, &$y, &$K = null, $xt = null) {
     if ($xt) {
       // Target the x value then interpolate
       $this->slice($xt, $x1, $x5, $yt);
-      $this->interpN($n, $x1, $x5, $yt, $x, $y);
+      $this->interpN($n, $x1, $x5, $yt, $x, $y, $K);
     }
     else {
       // Interpolate
-      $this->interpN($n, $this->x1, $this->xN, $this->y, $x, $y);
+      $this->interpN($n, $this->x1, $this->xN, $this->y, $x, $y, $K);
     }
 
     return;
@@ -164,10 +165,11 @@ class Interp5 {
    *
    * @param float $x Value of x to interpolate
    * @param float $y (returned) Interpolated value of y at x
+   * @param float $K (returned) Last value from table of differences
    *
    * @throws OutOfRangeException Occurs if the x-value is out of range
    */
-  public function x($x, &$y) {
+  public function x($x, &$y, &$K = null) {
     // Check if x value is out of range
     if ($x < $this->x1 || $x > $this->xN)
       throw new OutOfRangeException("The x value '{$x}' is out of the range "
@@ -182,7 +184,7 @@ class Interp5 {
     $n  = (4 * $x - 2 * $xΣ) / $xΔ;
 
     // For calculated slice, interpolate n
-    $this->interpN($n, $x1, $x5, $yt, $x, $y);
+    $this->interpN($n, $x1, $x5, $yt, $x, $y, $K);
     return;
   }
 
@@ -191,14 +193,16 @@ class Interp5 {
    *
    * @param  float $x (returned) Interpolated value of x at the extremum
    * @param  float $y (returned) Interpolated value of y at the extremum
+   * @param  float $K (returned) Last value from table of differences
    * @return bool     True if extremum found, false if it was not
    */
-  public function extremum(&$x, &$y) {
+  public function extremum(&$x, &$y, &$K = null) {
     $found = false;
 
     // Initialize x and y
     $x;
     $y = PHP_INT_MAX;
+    $K´;
 
     // Find extremum for each slice
     foreach ($this->slices() as $slice) {
@@ -251,11 +255,14 @@ class Interp5 {
         $intvl = abs($x5 - $x1) / (count($yt) - 1);
         $x     = $x´;
         $y     = $y´;
+        $K´    = $K;
       }
     }
 
     if (!$found)
       $y = null;
+    else
+      $K = $K´;
 
     // Return true if extremum found, false if not
     return $found;
@@ -266,9 +273,10 @@ class Interp5 {
    *
    * @param  float $x (returned) Interpolated value of x at the zero
    * @param  float $y (returned) Interpolated value of y at the zero
+   * @param  float $K (returned) Last value from table of differences
    * @return bool     True if zero found, false if it was not
    */
-  public function zero(&$x, &$y) {
+  public function zero(&$x, &$y, &$K = null) {
     // Flag for zero n-factor found
     $f0 = false;
 
@@ -311,7 +319,7 @@ class Interp5 {
 
     // If an n-factor for the zero has been found, interpolate it
     if ($f0)
-      $this->interpN($n, $x1, $x5, $yt, $x, $y);
+      $this->interpN($n, $x1, $x5, $yt, $x, $y, $K);
 
     // Return true if zero found, false if not
     return $f0 ? true : false;
@@ -499,11 +507,12 @@ class Interp5 {
    * @param array $yt Array of y-values
    * @param float $x  (returned) Interpolated value of x at n
    * @param float $y  (returned) Interpolated value of y at n
+   * @param float $K  (returned) Last value from table of differences
    *
    * @throws IncorrectCountException Occurs if more than 3 y-values
    * @throws OutOfRangeException     Occurs if the n-favtor is out of range
    */
-  protected function interpN($n, $x1, $x5, array $yt, &$x, &$y) {
+  protected function interpN($n, $x1, $x5, array $yt, &$x, &$y, &$K = null) {
     if (count($yt) != 5)
       throw new IncorrectCountException("Interpolation by n-factor is not "
       . "valid with not exactly three y values");

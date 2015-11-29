@@ -11,16 +11,14 @@ class Interp3Test extends \PHPUnit_Framework_TestCase {
    * @covers Marando\Interp\Interp3::n
    */
   public function testN() {
-    // Targeted n-factor
+    // Target x whereby to use n-factor (more than 3 values)
     $yt = [0.898013, 0.891109, 0.884226, 0.877366, 0.870531];
-    Interp3::init(5, 9, $yt)->n(0.18125, $x, $y, 8);
-
+    Interp3::init(5, 9, $yt)->n(0.18125, $x, $y, $c, 8);
     $this->assertEquals(8.18125, $x, 'x targeted', 1e-6);
     $this->assertEquals(0.876125, $y, 'y targeted', 1e-6);
 
-    // n-factor
+    // Straight n-factor
     Interp3::init(7, 9, [0.884226, 0.877366, 0.870531])->n(0.18125, $x, $y);
-
     $this->assertEquals(8.18125, $x, 'x', 1e-6);
     $this->assertEquals(0.876125, $y, 'y', 1e-6);
   }

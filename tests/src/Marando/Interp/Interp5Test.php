@@ -37,7 +37,7 @@ class Interp5Test extends \PHPUnit_Framework_TestCase {
         54 / 60 + 8.694 / 3600,
         54 / 60 + 4.133 / 3600,
     ];
-    Interp5::init(27, 29, $yt)->x(28 + (3 + 20 / 60) / 24, $y);
+    Interp5::init(27, 29, $yt)->x(28 + (3 + 20 / 60) / 24, $y, $K);
     $this->assertEquals(54 / 60 + 13.369 / 3600, $y, 'y (5 values)', 1e-6);
 
     // More than 5 data points
