@@ -1,6 +1,7 @@
 <?php
 
 use \Marando\Interp\Interp3;
+use \Marando\Interp\Interp5;
 
 /*
  * Copyright (C) 2015 Ashley Marando
@@ -23,6 +24,9 @@ use \Marando\Interp\Interp3;
 class GenericTest extends PHPUnit_Framework_TestCase {
 
   public function test() {
+
+   
+
     return;
     //$i3 = Interp3::init(12, 20, [1.3814294, 2.3812213, 3.3812453]);
     $interp = Interp3::init(25, 29, [-2000, -1693.4, 406.3, 2303.2, 3000]);

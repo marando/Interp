@@ -170,7 +170,8 @@ class Interp3 {
   public function x($x, &$y) {
     // Check if x value is out of range
     if ($x < $this->x1 || $x > $this->xN)
-      throw new OutOfRangeException("The x value is out of range.");
+      throw new OutOfRangeException("The x value '{$x}' is out of the range "
+      . "[{$this->x1}, {$this->xN}].");
 
     // Grab slice centered around gien x
     $this->slice($x, $x1, $x3, $yt);
@@ -230,6 +231,9 @@ class Interp3 {
         $y     = $y´;
       }
     }
+
+    if (!$found)
+      $y = null;
 
     // Return true if extremum found, false if not
     return $found;
@@ -530,10 +534,11 @@ class Interp3 {
     return;
   }
 
-  protected static function better0n(array $y) {
-
-  }
-
+  /**
+   * Finds the n-factor for the zero using an accurate (slow) method
+   * @param  array $y
+   * @return float
+   */
   protected static function nZeroB(array $y) {
     static::diffs($y, $a, $b, $c);
 
@@ -543,7 +548,6 @@ class Interp3 {
       $n0 = $n;
       $n  = -1 * (2 * $y[1] + $n0 * ($a + $b + $c * $n0)) /
               ($a + $b + 2 * $c * $n0);
-
 
       if ($n == $n0)
         break;  // n value was found, break loop.
@@ -555,6 +559,11 @@ class Interp3 {
     return $n;
   }
 
+  /**
+   * Finds the n-factor for the zero using an accurate (slow) method
+   * @param  array $y
+   * @return float
+   */
   protected static function nZeroF(array $y) {
     static::diffs($y, $a, $b, $c);
 
