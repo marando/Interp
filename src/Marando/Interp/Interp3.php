@@ -162,12 +162,12 @@ class Interp3 {
   /**
    * Interpolates an x-value
    *
-   * @param float $x (returned) Interpolated value of x to interpolate
+   * @param float $x Value of x to interpolate
    * @param float $y (returned) Interpolated value of y at x
    *
    * @throws OutOfRangeException Occurs if the x-value is out of range
    */
-  public function x(&$x, &$y) {
+  public function x($x, &$y) {
     // Check if x value is out of range
     if ($x < $this->x1 || $x > $this->xN)
       throw new OutOfRangeException("The x value is out of range.");
@@ -225,7 +225,8 @@ class Interp3 {
       if ($y´ < $y) {
         // New extremum found, populate variablesF
         $found = true;
-        $x     = 0.5 * (($x3 + $x1) + ($x3 - $x1) * $n);
+        $intvl = abs($x3 - $x1) / (count($yt) - 1);
+        $x     = ($x1 + $intvl) + ($n * $intvl);
         $y     = $y´;
       }
     }
@@ -372,7 +373,7 @@ class Interp3 {
     $slices = [];
     for ($i = 0; $i < $count; $i++) {
       $x1 = $this->x1 + $intvl * $i;
-      $x3 = $this->x1 + $intvl * $i + $tabv - 1;
+      $x3 = $this->x1 + $intvl * ($i + $tabv - 1);
       $y  = array_slice($this->y, $i, 3);
 
       // Add the slices
@@ -486,12 +487,15 @@ class Interp3 {
     if ($e)
       throw $e;
 
+    // tabular interval
+    $intvl = abs($x3 - $x1) / (count($yt) - 1);
+
     // Get table of diffs
     static::diffs($yt, $a, $b, $c);
 
     // Interpolate y and find x.
     $y = $yt[1] + $n / 2 * ( ($a + $b) + $n * $c );
-    $x = 0.5 * (($x3 + $x1) + ($x3 - $x1) * $n);
+    $x = ($x1 + $intvl) + ($n * $intvl);
 
     return;
   }
