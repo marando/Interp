@@ -112,11 +112,26 @@ If no extremum can be found a `NoExtremumException` will be thrown.
 
 #### Interpolation of the Zero
 
+Interpolation at `y = 0` can be found by using the `zero()` function which works exactly the same as the `extremum()` function. If no zero can be found a `NoZeroException` will be thrown.
 
+```php
+$i3 = new Interp3(1, 6, [-2, -1, 0, 1, 2, 3]);
+$i3->zero($x, $y, $c);
 
+print $x;
+print $y;
+print $c;
+```
+Output:
+```
+3
+0
+0
+```
 
+#### Strictness
 
-
+The `Interp3` and `Interp5` objects have a property called `strict` which if set to true restricts all interpolation factors to safe values between -0.5 and 0.5, otherwise the limit is set to [-1, 1]
 
 
 
