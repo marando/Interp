@@ -14,7 +14,7 @@ $ composer require marando/interp
 Usage
 -----
 
-###Interp3 and Interp5
+### Difference Interpolation with `Interp3` and `Interp5`
 
 Both the `Interp3` and `Interp5` objects can interpolate data using the second and third difference interpolation methods respectively. This method requires that all data points are equidistant.
 
@@ -132,6 +132,32 @@ Output:
 #### Strictness
 
 The `Interp3` and `Interp5` objects have a property called `strict` which if set to true restricts all interpolation factors to safe values between -0.5 and 0.5, otherwise the limit is set to [-1, 1]
+
+
+### Lagrange Interpolation
+
+Lagrange interpolation can be performed with the `Lagrange` object. You must provide the object a table of x and y values by using either the default constructor or the `init()` method:
+
+```php
+// Initialize Lagrange object with data
+$l = Lagrange::init($data = [
+  [29.43, .4913598528],
+  [30.97, .5145891926],
+  [27.69, .4646875083],
+  [28.11, .4711658342],
+  [31.58, .5236885653],
+  [33.05, .5453707057],
+]);
+```
+Then use the `x()` method to interpolate a given x-value. The value of y is returned by reference:
+```php
+$l->x(30, $y);
+print $y
+```
+Output:
+```
+0.5
+```
 
 
 
